@@ -1,0 +1,15 @@
+[programs.localnet]
+solana_jobs = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+
+[registry]
+url = "https://anchor.projectserum.com"
+
+[provider]
+cluster = "localnet"
+wallet = "/Users/stephenjohnson/.config/solana/id.json"
+
+[scripts]
+test = "node tests/solana-jobs.js"
+
+[test]
+startup_wait = 10000
