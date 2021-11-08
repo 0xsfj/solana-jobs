@@ -5,16 +5,14 @@ const main = async () => {
   console.log(`Starting Project`);
 
   const provider = anchor.Provider.env();
-
   // Configure the client to use the local cluster.
   anchor.setProvider(provider);
 
   // Add your test here.
   const program = anchor.workspace.SolanaJobs;
-
   const baseAccount = anchor.web3.Keypair.generate();
 
-  const tx = await program.rpc.startStuffOff({
+  const tx = await program.rpc.initialize({
     accounts: {
       baseAccount: baseAccount.publicKey,
       user: provider.wallet.publicKey,
@@ -27,7 +25,7 @@ const main = async () => {
   let account = await program.account.baseAccount.fetch(baseAccount.publicKey);
   console.log('Total Jobs', account.totalJobs.toString());
 
-  await program.rpc.addJobs({
+  await program.rpc.addJob({
     accounts: {
       baseAccount: baseAccount.publicKey,
     },

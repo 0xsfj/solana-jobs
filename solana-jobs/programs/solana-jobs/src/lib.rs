@@ -8,15 +8,12 @@ pub mod solana_jobs {
     pub fn initialize(ctx: Context<Start>) -> ProgramResult {
         // Get a reference to the account
         let base_account = &mut ctx.accounts.base_account;
-
-        // Initialize the base account
         base_account.total_jobs = 0;
         Ok(())
     }
 
     pub fn add_job(ctx: Context<AddJob>) -> ProgramResult {
         let base_account = &mut ctx.accounts.base_account;
-
         base_account.total_jobs += 1;
         Ok(())
     }
@@ -31,12 +28,6 @@ pub struct Start<'info> {
     pub system_program: Program<'info, System>,
 }
 
-// #[derive(Accounts)]
-// pub struct addJob<'info> {
-//     #[account(mut)]
-//     pub base_account: Account<'info, BaseAccount>,
-// }
-
 #[derive(Accounts)]
 pub struct AddJob<'info> {
     #[account(mut)]
@@ -44,19 +35,17 @@ pub struct AddJob<'info> {
 }
 
 #[account]
-pub struct BaseAccount<'info> {
+pub struct BaseAccount {
     pub total_jobs: u64,
 }
 
-pub fn add_job(ctx: Context<AddJob>) -> ProgramResult {
-    // Get a reference to the account
-    let base_account = &mut ctx.accounts.base_account;
+// pub fn add_job(ctx: Context<AddJob>) -> ProgramResult {
+//     // Get a reference to the account
+//     let base_account = &mut ctx.accounts.base_account;
 
-    // Increment the total jobs
-    base_account.total_jobs += 1;
+//     // Increment the total jobs
+//     base_account.total_jobs += 1;
 
-    // Return the new total jobs
-    Ok(())
-}
-
-// pub struct Initialize {}
+//     // Return the new total jobs
+//     Ok(())
+// }
