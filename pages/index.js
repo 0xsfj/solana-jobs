@@ -4,6 +4,23 @@ import styles from '../styles/Home.module.css';
 import { Flex, Spacer, Button, Icon, Text, SimpleGrid, Box, Image, Badge, Stack, Progress, useToast, Container, Heading, Grid, Field, FormControl, Form, FormLabel, Input, FormErrorMessage } from '@chakra-ui/react';
 // import { Formik } from 'formik';
 import { useForm } from 'react-hook-form';
+import idl from '../solana-jobs/target/idl/solana_jobs.json';
+import { Program, Provider, web3 } from '@project-serum/anchor';
+import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
+
+const { SystemProgram, Keypair } = web3;
+
+// Create a keypair for the account
+let baseAccount = Keypair.generate();
+
+// Get the program id from the idl
+const programID = new PublicKey(idl.metadata.address);
+
+const network = clusterApiUrl('devnet');
+
+const opts = {
+  preflightCommitment: 'processed',
+};
 
 const JOB_LISTINGS = [
   {
@@ -37,7 +54,7 @@ const Home = () => {
   const [walletAddress, setWalletAddress] = useState(null);
   const [jobs, setJobs] = useState([]);
 
-  const toast = useToast();
+  // const toast = useToast();
 
   const checkIfWalletIsConnected = async () => {
     try {
@@ -61,6 +78,12 @@ const Home = () => {
     }
   };
 
+  const getProvider = () => {
+    const connection = new Connection(network, opts.preflightCommitment);
+    const provider = new Provider(connection, window.solana, opts.preflightCommitment);
+    return provider;
+  };
+
   const connectWallet = async () => {
     try {
       const { solana } = window;
@@ -74,17 +97,51 @@ const Home = () => {
     }
   };
 
+  const createJobAccount = async () => {
+    try {
+      const provider = getProvider();
+      const program = new Program(idl, programID, provider);
+      console.log('ping');
+      await program.rpc.initialize({
+        accounts: {
+          baseAccount: baseAccount.publicKey,
+          user: provider.wallet.publicKey,
+          systemProgram: SystemProgram.programId,
+        },
+        signers: [baseAccount],
+      });
+      console.log('Create a new BaseAccount w/ address:', baseAccount.publicKey.toString());
+      await getJobList();
+    } catch (error) {
+      console.log('Error creating BaseAccount', error);
+    }
+  };
+
   useEffect(() => {
     window.addEventListener('load', async (event) => {
       await checkIfWalletIsConnected();
     });
   }, []);
 
+  const getJobList = async () => {
+    try {
+      const provider = getProvider();
+      const program = new Program(idl, programID, provider);
+      const account = program.account.baseAccount.fetch(baseAccount.publicKey);
+
+      console.log(`Account`, account);
+      setJobs(account.jobsList);
+    } catch (error) {
+      console.log(error);
+      setJobs(null);
+    }
+  };
+
   useEffect(() => {
     if (walletAddress) {
       console.log(`Fetch Job List`);
 
-      setJobs(JOB_LISTINGS);
+      getJobList();
     }
   }, [walletAddress]);
 
@@ -113,7 +170,7 @@ const Home = () => {
     return (
       <>
         <Box mb={4}>
-          <Text>Your Solana Address:</Text>
+          <Heading size={'md'}>Your Solana Address:</Heading>
           <Text>{walletAddress.slice(0, 8)}...</Text>
         </Box>
 
@@ -138,6 +195,40 @@ const Home = () => {
     );
   };
 
+  const ListOfJobs = () => {
+    console.log(jobs);
+    if (jobs === undefined) {
+      return (
+        <Box>
+          <Heading size={'md'} mb="4">
+            No Jobs Found
+          </Heading>
+          <Button onClick={createJobAccount} colorScheme="blue">
+            Create Job Account
+          </Button>
+        </Box>
+      );
+    }
+
+    return (
+      <Box>
+        {jobs.map((job, key) => (
+          <Box key={key} mb="4">
+            <Heading size={'md'}>{job.title}</Heading>
+            <Text>{job.company}</Text>
+            <Stack isInline spacing={4}>
+              {job.tags.map((tag) => (
+                <Badge key={tag} colorScheme="blue" variant="solid">
+                  {tag}
+                </Badge>
+              ))}
+            </Stack>
+          </Box>
+        ))}
+      </Box>
+    );
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -151,7 +242,7 @@ const Home = () => {
           Solana Jobs
         </Heading>
 
-        <Box mb={4} textAlign="center">
+        <Box mb={8} textAlign="center">
           <Text>New opportunities to work on Solana hosted on the Solana Blockchain</Text>
           <Text color="red.500" fontWeight="bold">
             Current Jobs are placeholders
@@ -162,21 +253,7 @@ const Home = () => {
 
         <Container>
           <SimpleGrid columns={[1, 1, 2]} spacing={8}>
-            <Box>
-              {JOB_LISTINGS.map((job, key) => (
-                <Box key={key} mb="4">
-                  <Heading size={'md'}>{job.title}</Heading>
-                  <Text>{job.company}</Text>
-                  <Stack isInline spacing={4}>
-                    {job.tags.map((tag) => (
-                      <Badge key={tag} colorScheme="blue" variant="solid">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </Stack>
-                </Box>
-              ))}
-            </Box>
+            <ListOfJobs />
             <Box>{walletAddress && <ConnectedWalletContent />}</Box>
           </SimpleGrid>
         </Container>

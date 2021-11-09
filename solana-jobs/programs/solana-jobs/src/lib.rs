@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("BVMLaLJdNrAMF7qNUoGp4cx4NrgCthV8iK6rwgkuDK1g");
 
 #[program]
 pub mod solana_jobs {
@@ -12,8 +12,15 @@ pub mod solana_jobs {
         Ok(())
     }
 
-    pub fn add_job(ctx: Context<AddJob>) -> ProgramResult {
+    pub fn add_job(ctx: Context<AddJob>, job_link: String) -> ProgramResult {
         let base_account = &mut ctx.accounts.base_account;
+
+        let item = ItemStruct {
+            job_link: job_link.to_string(),
+            user_address: *base_account.to_account_info().key,
+        };
+
+        base_account.job_list.push(item);
         base_account.total_jobs += 1;
         Ok(())
     }
@@ -34,9 +41,16 @@ pub struct AddJob<'info> {
     pub base_account: Account<'info, BaseAccount>,
 }
 
+#[derive(Debug, Clone, AnchorSerialize, AnchorDeserialize)]
+pub struct ItemStruct {
+    pub job_link: String,
+    pub user_address: Pubkey,
+}
+
 #[account]
 pub struct BaseAccount {
     pub total_jobs: u64,
+    pub job_list: Vec<ItemStruct>,
 }
 
 // pub fn add_job(ctx: Context<AddJob>) -> ProgramResult {

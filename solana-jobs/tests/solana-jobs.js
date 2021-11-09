@@ -25,7 +25,7 @@ const main = async () => {
   let account = await program.account.baseAccount.fetch(baseAccount.publicKey);
   console.log('Total Jobs', account.totalJobs.toString());
 
-  await program.rpc.addJob({
+  await program.rpc.addJob('insert_link_to_job_post', {
     accounts: {
       baseAccount: baseAccount.publicKey,
     },
@@ -33,6 +33,8 @@ const main = async () => {
 
   account = await program.account.baseAccount.fetch(baseAccount.publicKey);
   console.log('Total Jobs', account.totalJobs.toString());
+
+  console.log('Job List: ', account.jobList);
 };
 
 const runMain = async () => {
