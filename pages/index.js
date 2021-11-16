@@ -7,11 +7,21 @@ import { useForm } from 'react-hook-form';
 import idl from '../solana-jobs/target/idl/solana_jobs.json';
 import { Program, Provider, web3 } from '@project-serum/anchor';
 import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
+import kp from '../keypair/keypair.json';
 
 const { SystemProgram, Keypair } = web3;
 
+// Keypair
+// https://app.buildspace.so/courses/CObd6d35ce-3394-4bd8-977e-cbee82ae07a3/lessons/LE442a50e1-1c57-471f-a3ae-c6ca7cbbe33b
+
 // Create a keypair for the account
-let baseAccount = Keypair.generate();
+// let baseAccount = Keypair.generate();
+
+const arr = Object.values(kp._keypair.secretKey);
+const secret = new Uint8Array(arr);
+const baseAccount = web3.Keypair.fromSecretKey(secret);
+
+// End Keypair
 
 // Get the program id from the idl
 const programID = new PublicKey(idl.metadata.address);
