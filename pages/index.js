@@ -111,7 +111,7 @@ const Home = () => {
         signers: [baseAccount],
       });
       console.log('Create a new BaseAccount w/ address:', baseAccount.publicKey.toString());
-      await getJobList();
+      // await getJobList();
     } catch (error) {
       console.log('Error creating BaseAccount', error);
     }
@@ -130,10 +130,11 @@ const Home = () => {
       const account = await program.account.baseAccount.fetch(baseAccount.publicKey);
 
       console.log(`Account`, account);
-      await setJobs(account.jobsList);
+      console.log(account.jobList);
+      await setJobs(account.jobList);
     } catch (error) {
       console.log(error);
-      setJobs(null);
+      setJobs([]);
     }
   };
 
@@ -194,8 +195,6 @@ const Home = () => {
       sendJob(values);
     };
 
-    console.log(watch('title'));
-
     return (
       <>
         <Box mb={4}>
@@ -225,8 +224,8 @@ const Home = () => {
   };
 
   const ListOfJobs = () => {
-    console.log(jobs);
-    if (jobs === undefined || jobs === null) {
+    console.log({ jobs });
+    if (jobs.length === 0) {
       return (
         <Box>
           <Heading size={'md'} mb="4">
@@ -241,19 +240,26 @@ const Home = () => {
 
     return (
       <Box>
-        {jobs.map((job, key) => (
-          <Box key={key} mb="4">
-            <Heading size={'md'}>{job.title}</Heading>
-            <Text>{job.company}</Text>
-            <Stack isInline spacing={4}>
-              {job.tags.map((tag) => (
-                <Badge key={tag} colorScheme="blue" variant="solid">
-                  {tag}
-                </Badge>
-              ))}
-            </Stack>
-          </Box>
-        ))}
+        {jobs.map((job, key) => {
+          const jobTitle = job.jobLink;
+
+          const companyPlacehlder = 'Burnt Finance';
+
+          const tagsPlaceholders = ['Software', 'Engineer'];
+          return (
+            <Box key={key} mb="4">
+              <Heading size={'md'}>{jobTitle}</Heading>
+              <Text>{companyPlacehlder}</Text>
+              <Stack isInline spacing={4}>
+                {tagsPlaceholders.map((tag) => (
+                  <Badge key={tag} colorScheme="blue" variant="solid">
+                    {tag}
+                  </Badge>
+                ))}
+              </Stack>
+            </Box>
+          );
+        })}
       </Box>
     );
   };
