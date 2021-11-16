@@ -127,10 +127,10 @@ const Home = () => {
     try {
       const provider = getProvider();
       const program = new Program(idl, programID, provider);
-      const account = program.account.baseAccount.fetch(baseAccount.publicKey);
+      const account = await program.account.baseAccount.fetch(baseAccount.publicKey);
 
       console.log(`Account`, account);
-      setJobs(account.jobsList);
+      await setJobs(account.jobsList);
     } catch (error) {
       console.log(error);
       setJobs(null);
@@ -144,6 +144,34 @@ const Home = () => {
       getJobList();
     }
   }, [walletAddress]);
+
+  const sendJob = async (values) => {
+    console.log(`values`);
+    console.log(values);
+    // if (inputValue.length === 0) {
+    //   console.log('No Job Given');
+    //   return;
+    // }
+    // console.log(`Send Job`, inputValue);
+    console.log(values.title);
+
+    try {
+      const provider = getProvider();
+      const program = new Program(idl, programID, provider);
+
+      await program.rpc.addJob(values.title, {
+        accounts: {
+          baseAccount: baseAccount.publicKey,
+          user: provider.wallet.publicKey,
+        },
+      });
+      console.log(`Job was sent to program:`, values.title);
+
+      await getJobList();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const ConnectWalletContent = () => {
     return (
@@ -161,8 +189,9 @@ const Home = () => {
       watch,
       formState: { errors },
     } = useForm();
-    const onSubmit = (data) => {
-      console.log(data);
+    const onSubmit = (values) => {
+      console.log(values);
+      sendJob(values);
     };
 
     console.log(watch('title'));
@@ -197,7 +226,7 @@ const Home = () => {
 
   const ListOfJobs = () => {
     console.log(jobs);
-    if (jobs === undefined) {
+    if (jobs === undefined || jobs === null) {
       return (
         <Box>
           <Heading size={'md'} mb="4">
@@ -244,6 +273,9 @@ const Home = () => {
 
         <Box mb={8} textAlign="center">
           <Text>New opportunities to work on Solana hosted on the Solana Blockchain</Text>
+          <Text>To submit a you will need a Solana wallet and some Solana. One of te best is Phantom Wallet.</Text>
+          <Text>Connect your wallet and fill in the job fields</Text>
+          <Text>Job posting is 1 SOL per month</Text>
           <Text color="red.500" fontWeight="bold">
             Current Jobs are placeholders
           </Text>

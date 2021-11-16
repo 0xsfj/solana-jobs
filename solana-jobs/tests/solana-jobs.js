@@ -12,6 +12,8 @@ const main = async () => {
   const program = anchor.workspace.SolanaJobs;
   const baseAccount = anchor.web3.Keypair.generate();
 
+  console.log(baseAccount);
+
   const tx = await program.rpc.initialize({
     accounts: {
       baseAccount: baseAccount.publicKey,
