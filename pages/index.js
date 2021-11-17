@@ -4,7 +4,7 @@ import styles from '../styles/Home.module.css';
 import { Flex, Spacer, Button, Icon, Text, SimpleGrid, Box, Image, Badge, Stack, Progress, useToast, Container, Heading, Grid, Field, FormControl, Form, FormLabel, Input, FormErrorMessage } from '@chakra-ui/react';
 // import { Formik } from 'formik';
 import { useForm } from 'react-hook-form';
-import idl from '../solana-jobs/target/idl/solana_jobs.json';
+import idl from '../target/idl/solana_jobs.json';
 import { Program, Provider, web3 } from '@project-serum/anchor';
 import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
 import kp from '../keypair/keypair.json';
@@ -26,39 +26,11 @@ const baseAccount = web3.Keypair.fromSecretKey(secret);
 // Get the program id from the idl
 const programID = new PublicKey(idl.metadata.address);
 
-const network = clusterApiUrl('devnet');
+const network = clusterApiUrl('testnet');
 
 const opts = {
   preflightCommitment: 'processed',
 };
-
-const JOB_LISTINGS = [
-  {
-    title: 'Software Engineer',
-    company: 'Burnt Finance',
-    tags: ['Software', 'Engineer'],
-  },
-  {
-    title: 'Frontend Developer',
-    company: 'Bancambios DeFi',
-    tags: ['Frontend', 'Developer', 'React'],
-  },
-  {
-    title: 'Sr, Frontend Developer',
-    company: '8Pay',
-    tags: ['Frontend', 'Developer', 'React'],
-  },
-  {
-    title: 'Frontend Engineer',
-    company: 'CropperFinance',
-    tags: ['Frontend', 'Developer', 'React'],
-  },
-  {
-    title: 'Frontend Developer',
-    company: 'Jungle Finance',
-    tags: ['Frontend', 'Developer'],
-  },
-];
 
 const Home = () => {
   const [walletAddress, setWalletAddress] = useState(null);
