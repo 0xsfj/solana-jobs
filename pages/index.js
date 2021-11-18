@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css';
 import { Flex, Spacer, Button, Icon, Text, SimpleGrid, Box, Image, HStack, Badge, Stack, Progress, useToast, Container, Heading, Grid, Field, FormControl, Form, FormLabel, Input, FormErrorMessage, useColorModeValue } from '@chakra-ui/react';
 import { BellIcon } from '@chakra-ui/icons';
+import Footer from '../components/Footer';
 
 import { useForm } from 'react-hook-form';
 import idl from '../target/idl/solana_jobs.json';
@@ -296,11 +297,7 @@ const Home = () => {
         </Container>
       </Box>
 
-      <footer className={styles.footer}>
-        <a href="https://sfj.dev" target="_blank" rel="noopener noreferrer">
-          Built By sfj.eth
-        </a>
-      </footer>
+      <Footer />
     </>
   );
 };
