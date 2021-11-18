@@ -1,8 +1,9 @@
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css';
-import { Flex, Spacer, Button, Icon, Text, SimpleGrid, Box, Image, Badge, Stack, Progress, useToast, Container, Heading, Grid, Field, FormControl, Form, FormLabel, Input, FormErrorMessage } from '@chakra-ui/react';
-// import { Formik } from 'formik';
+import { Flex, Spacer, Button, Icon, Text, SimpleGrid, Box, Image, HStack, Badge, Stack, Progress, useToast, Container, Heading, Grid, Field, FormControl, Form, FormLabel, Input, FormErrorMessage, useColorModeValue } from '@chakra-ui/react';
+import { BellIcon } from '@chakra-ui/icons';
+
 import { useForm } from 'react-hook-form';
 import idl from '../target/idl/solana_jobs.json';
 import { Program, Provider, web3 } from '@project-serum/anchor';
@@ -179,11 +180,6 @@ const Home = () => {
 
     return (
       <>
-        <Box mb={4}>
-          <Heading size={'md'}>Your Solana Address:</Heading>
-          <Text>{walletAddress.slice(0, 8)}...</Text>
-        </Box>
-
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormLabel htmlFor="title">Title</FormLabel>
           <Input placeholder="Frontend Engineer" {...register('title', { required: true })} />
@@ -247,26 +243,47 @@ const Home = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <>
       <Head>
         <title>Solana Jobs</title>
         <meta name="description" content="New opportunities to work on Solana hosted on Solana" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <Heading size={'4xl'} mb={4}>
+      <Box as="main">
+        <Box as="section" pb="12">
+          <Stack
+            direction={{
+              base: 'column',
+              sm: 'row',
+            }}
+            justifyContent="center"
+            alignItems="center"
+            py="3"
+            px={{
+              base: '3',
+              md: '6',
+              lg: '8',
+            }}
+            color="white"
+            bg={useColorModeValue('red.600', 'red.400')}
+          >
+            <HStack spacing="3">
+              <Icon as={BellIcon} fontSize="2xl" h="10" />
+              <Text fontWeight="medium" marginEnd="2">
+                Currently in testing on Solana Testnet
+              </Text>
+            </HStack>
+          </Stack>
+        </Box>
+        <Heading size={'4xl'} mb={4} textAlign="center">
           Solana Jobs
         </Heading>
 
         <Box mb={8} textAlign="center">
           <Text>New opportunities to work on Solana hosted on the Solana Blockchain</Text>
           <Text>To submit a you will need a Solana wallet and some Solana. One of te best is Phantom Wallet.</Text>
-          <Text>Connect your wallet and fill in the job fields</Text>
           <Text>Job posting is 1 SOL per month</Text>
-          <Text color="red.500" fontWeight="bold">
-            Current Jobs are placeholders
-          </Text>
         </Box>
 
         {!walletAddress && <ConnectWalletContent />}
@@ -277,14 +294,14 @@ const Home = () => {
             <Box>{walletAddress && <ConnectedWalletContent />}</Box>
           </SimpleGrid>
         </Container>
-      </main>
+      </Box>
 
       <footer className={styles.footer}>
         <a href="https://sfj.dev" target="_blank" rel="noopener noreferrer">
           Built By sfj.eth
         </a>
       </footer>
-    </div>
+    </>
   );
 };
 
