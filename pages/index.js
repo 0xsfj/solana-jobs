@@ -1,7 +1,39 @@
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css';
-import { Flex, Spacer, Button, Icon, Text, SimpleGrid, Box, Image, HStack, Badge, Stack, Progress, useToast, Container, Heading, Grid, Field, FormControl, Form, FormLabel, Input, FormErrorMessage, useColorModeValue } from '@chakra-ui/react';
+import {
+  Flex,
+  Spacer,
+  Button,
+  Icon,
+  Text,
+  SimpleGrid,
+  Box,
+  Image,
+  HStack,
+  Badge,
+  Stack,
+  Progress,
+  useToast,
+  Container,
+  Heading,
+  Grid,
+  Field,
+  FormControl,
+  Form,
+  FormLabel,
+  Input,
+  FormErrorMessage,
+  useColorModeValue,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { BellIcon } from '@chakra-ui/icons';
 import Footer from '../components/Footer';
 
@@ -38,7 +70,9 @@ const Home = () => {
   const [walletAddress, setWalletAddress] = useState(null);
   const [jobs, setJobs] = useState([]);
 
-  // const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const toast = useToast();
 
   const checkIfWalletIsConnected = async () => {
     try {
@@ -177,24 +211,31 @@ const Home = () => {
     const onSubmit = (values) => {
       console.log(values);
       sendJob(values);
+      onClose();
     };
 
     return (
       <>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <FormLabel htmlFor="title">Title</FormLabel>
-          <Input placeholder="Frontend Engineer" {...register('title', { required: true })} />
-          {errors.title && <FormErrorMessage>This field is required</FormErrorMessage>}
+          <FormControl mb="4">
+            <FormLabel htmlFor="title">Title</FormLabel>
+            <Input placeholder="Frontend Engineer" {...register('title', { required: true })} />
+            {errors.title && <FormErrorMessage>This field is required</FormErrorMessage>}
+          </FormControl>
 
-          <FormLabel htmlFor="company">Company</FormLabel>
-          <Input placeholder="Fun Finance" {...register('company', { required: true })} />
-          {errors.company && <FormErrorMessage>This field is required</FormErrorMessage>}
+          <FormControl mb="4">
+            <FormLabel htmlFor="company">Company</FormLabel>
+            <Input placeholder="Fun Finance" {...register('company', { required: true })} />
+            {errors.company && <FormErrorMessage>This field is required</FormErrorMessage>}
+          </FormControl>
 
-          <FormLabel htmlFor="link">Link</FormLabel>
-          <Input placeholder="https://solana.com/" {...register('link', { required: true })} />
-          {errors.company && <FormErrorMessage>This field is required</FormErrorMessage>}
+          <FormControl mb="4">
+            <FormLabel htmlFor="link">Link</FormLabel>
+            <Input placeholder="https://solana.com/" {...register('link', { required: true })} />
+            {errors.company && <FormErrorMessage>This field is required</FormErrorMessage>}
+          </FormControl>
 
-          <Button mt={4} colorScheme="blue" type="submit">
+          <Button mt={4} mb={4} colorScheme="blue" type="submit">
             Submit Job
           </Button>
         </form>
@@ -251,53 +292,72 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Box as="main">
-        <Box as="section" pb="12">
-          <Stack
-            direction={{
-              base: 'column',
-              sm: 'row',
-            }}
-            justifyContent="center"
-            alignItems="center"
-            py="3"
-            px={{
-              base: '3',
-              md: '6',
-              lg: '8',
-            }}
-            color="white"
-            bg={useColorModeValue('red.600', 'red.400')}
-          >
-            <HStack spacing="3">
-              <Icon as={BellIcon} fontSize="2xl" h="10" />
-              <Text fontWeight="medium" marginEnd="2">
-                Currently in testing on Solana Testnet
-              </Text>
-            </HStack>
-          </Stack>
-        </Box>
+      <Box as="section" pb="12">
+        <Stack
+          direction={{
+            base: 'column',
+            sm: 'row',
+          }}
+          justifyContent="center"
+          alignItems="center"
+          py="3"
+          px={{
+            base: '3',
+            md: '6',
+            lg: '8',
+          }}
+          color="white"
+          bg={useColorModeValue('red.600', 'red.400')}
+        >
+          <HStack spacing="3">
+            <Icon as={BellIcon} fontSize="2xl" h="10" />
+            <Text fontWeight="medium" marginEnd="2">
+              Currently in testing on Solana Testnet
+            </Text>
+          </HStack>
+        </Stack>
+      </Box>
+      <Box
+        as="main"
+        mx="auto"
+        maxW="7xl"
+        py="12"
+        px={{
+          base: '4',
+          md: '8',
+        }}
+      >
         <Heading size={'4xl'} mb={4} textAlign="center">
           Solana Jobs
         </Heading>
 
         <Box mb={8} textAlign="center">
-          <Text>New opportunities to work on Solana hosted on the Solana Blockchain</Text>
+          <Text fontSize="3xl">New opportunities to work on Solana hosted on the Solana Blockchain</Text>
           <Text>To submit a you will need a Solana wallet and some Solana. One of te best is Phantom Wallet.</Text>
-          <Text>Job posting is 1 SOL per month</Text>
+          <Text mb="4">Job posting is 1 SOL per month</Text>
+          <Button onClick={onOpen} colorScheme="blue">
+            Add New Job
+          </Button>
         </Box>
 
         {!walletAddress && <ConnectWalletContent />}
 
         <Container>
-          <SimpleGrid columns={[1, 1, 2]} spacing={8}>
-            <ListOfJobs />
-            <Box>{walletAddress && <ConnectedWalletContent />}</Box>
-          </SimpleGrid>
+          <ListOfJobs />
         </Container>
       </Box>
 
       <Footer />
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add a New Job</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Box>{walletAddress && <ConnectedWalletContent />}</Box>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 };

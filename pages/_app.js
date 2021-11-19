@@ -15,6 +15,7 @@ const theme = extendTheme({
     //   900: '#FAE9D1',
     // },
     gray: {
+      700: '#1c1c1c',
       800: '#000',
     },
   },
