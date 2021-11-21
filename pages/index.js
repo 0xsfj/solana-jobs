@@ -195,8 +195,11 @@ const Home = () => {
   const ConnectWalletContent = () => {
     return (
       <>
-        <p>To add a new job listing connect your account with Phantom Wallet 👻</p>
-        <button onClick={connectWallet}>Connect Wallet</button>
+        <Box>
+          <Button onClick={connectWallet} colorScheme="blue">
+            Connect Wallet
+          </Button>
+        </Box>
       </>
     );
   };
@@ -335,6 +338,7 @@ const Home = () => {
           <Text fontSize="3xl">New opportunities to work on Solana hosted on the Solana Blockchain</Text>
           <Text>To submit a you will need a Solana wallet and some Solana. One of te best is Phantom Wallet.</Text>
           <Text mb="4">Job posting is 1 SOL per month</Text>
+          {!walletAddress ? <p>To add a new job listing connect your account with Phantom Wallet 👻</p> : ''}
           <Button onClick={onOpen} colorScheme="blue">
             Add New Job
           </Button>
