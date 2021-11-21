@@ -195,7 +195,8 @@ const Home = () => {
   const ConnectWalletContent = () => {
     return (
       <>
-        <Box>
+        <Box textAlign="center">
+          <Text mb="4">To add a new job listing connect your account with Phantom Wallet 👻</Text>
           <Button onClick={connectWallet} colorScheme="blue">
             Connect Wallet
           </Button>
@@ -250,7 +251,7 @@ const Home = () => {
     console.log({ jobs });
     if (jobs.length === 0) {
       return (
-        <Box>
+        <Box w="100%" textAlign="center" p="20px">
           <Heading size={'md'} mb="4">
             No Jobs Found
           </Heading>
@@ -338,10 +339,13 @@ const Home = () => {
           <Text fontSize="3xl">New opportunities to work on Solana hosted on the Solana Blockchain</Text>
           <Text>To submit a you will need a Solana wallet and some Solana. One of te best is Phantom Wallet.</Text>
           <Text mb="4">Job posting is 1 SOL per month</Text>
-          {!walletAddress ? <p>To add a new job listing connect your account with Phantom Wallet 👻</p> : ''}
-          <Button onClick={onOpen} colorScheme="blue">
-            Add New Job
-          </Button>
+          {walletAddress ? (
+            <Button onClick={onOpen} colorScheme="blue">
+              Add New Job
+            </Button>
+          ) : (
+            ''
+          )}
         </Box>
 
         {!walletAddress && <ConnectWalletContent />}
