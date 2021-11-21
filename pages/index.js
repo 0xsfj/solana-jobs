@@ -249,6 +249,9 @@ const Home = () => {
 
   const ListOfJobs = () => {
     console.log({ jobs });
+    if (!walletAddress) {
+      return null;
+    }
     if (jobs.length === 0) {
       return (
         <Box w="100%" textAlign="center" p="20px">
